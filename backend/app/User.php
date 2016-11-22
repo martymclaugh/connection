@@ -2,38 +2,33 @@
 
 namespace App;
 
-use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Model implements AuthenticatableContract,
-                                    AuthorizableContract,
-                                    CanResetPasswordContract
+class User extends Authenticatable
 {
-    use Authenticatable, Authorizable, CanResetPassword;
+    // list of friends where id is friend_one_id
+    public function myFriends() {
+      return $this->belongsToMany(get_class($this), 'friends', 'friend_one_id');
+    }
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'users';
+    // list of friends where id is friend_two_id
+    public function friendOf() {
+      return $this->belongsToMany(get_class($this), 'friends', 'friend_two_id', 'friend_one_id');
+    }
 
+    // list of all friends
+    public function allFriends() {
+      return $this->myFriends->merge($this->friendOf);
+    }
+    // use '$user->allFriends()' to get list of all friends
+    
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password'];
-
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = ['password', 'remember_token'];
+    //  add attributes to user array
+    protected $fillable = [
+        'first_name', 'last_name', 'favorite_color',
+    ];
 }
