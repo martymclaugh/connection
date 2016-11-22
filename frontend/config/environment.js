@@ -48,3 +48,4 @@ module.exports = function(environment) {
 
   return ENV;
 };
+ENV.apiBaseUrl = 'http://www.rainbowconnection.com'
